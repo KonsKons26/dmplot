@@ -53,11 +53,12 @@ class MultiPlot:
         self.perfect_shape = True if perfect_shape else False
         self.square_shape = True if square_shape else False
         self.long = True if long else False
-        self.factors = self._get_factors()
+        self.factors = self._get_factors(self.n)
         self.next_perfect_square = self._find_next_perfect_square(self.n)
         self.previous_perfect_square = self._find_previous_perfect_square(
             self.n)
-        self.nearest_perfect_square = self._find_nearest_perfect_square()
+        self.nearest_perfect_square = self._find_nearest_perfect_square(
+            self.n, self.previous_perfect_square, self.next_perfect_square)
         if not shape:
             self.shape = self._get_shape()
         else:
@@ -66,8 +67,7 @@ class MultiPlot:
     def _make_dataset_dict(self, dataset):
         return {f"Plot {i + 1}": ds for i, ds in enumerate(dataset)}
 
-    def _get_factors(self):
-        n = self.n
+    def _get_factors(self, n):
         return sorted(list(set(
             factor for i in range(1, int(n**0.5) + 1) if n % i == 0
             for factor in (i, n//i))), reverse=False)
@@ -84,10 +84,7 @@ class MultiPlot:
         else:
             return self._find_previous_perfect_square(n - 1)
 
-    def _find_nearest_perfect_square(self):
-        n = self.n
-        prev_perf_sq = self.previous_perfect_square
-        next_perf_sq = self.next_perfect_square
+    def _find_nearest_perfect_square(self, n, previous_perfect_square, next_perfect_square):
         p_dist = n - prev_perf_sq
         n_dist = next_perf_sq - n
         if n == prev_perf_sq == next_perf_sq:
@@ -95,7 +92,7 @@ class MultiPlot:
         elif p_dist > n_dist:
             return next_perf_sq
         elif p_dist < n_dist:
-            return prev_perf_sq
+            return next_perf_sq
 
     def _get_shape(self):
         n = self.n

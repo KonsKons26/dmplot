@@ -95,7 +95,7 @@ class MultiPlot:
         elif p_dist > n_dist:
             return next_perf_sq
         elif p_dist < n_dist:
-            return prev_perf_sq
+            return next_perf_sq
 
     def _get_shape(self):
         n = self.n
