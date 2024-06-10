@@ -17,5 +17,14 @@ MultiPlot is a Python package designed to facilitate the creation of multiple pl
 - figsize:
   - \<tuple>, if not specified, will be set to (12, 10) if long=True, or (10, 12) if long=False.
 
-
 #### CHECK OUT THE NOTEBOOK FOR A SIMPLE GUIDE!!!! ####
+
+## PlotFunctions class
+Containts several simple plotting functions to save you from the hassle of creating your own plot functions. Passed inside the dynamic_plot() method of the MultiPlot class.
+- plot(ax, data)
+- scatterplot(ax, data)
+- barplot(ax, data)
+- histplot(ax, data)
+- imshow(ax, data)
+- boxplot(ax, data)
+- violinplot(ax, data)
