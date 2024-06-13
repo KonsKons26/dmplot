@@ -1,6 +1,6 @@
 # dmplot: A Python Package for Dynamic Multiple Plot Generation
 
-MultiPlot is a Python package designed to facilitate the creation of multiple plots arranged in a grid-like fashion without having to stress over making the subplots fit in a grid. It provides a simple interface for generating various types of plots from datasets, with customizable layouts, simple preset plotting functions and the ability to use custom plotting functions.
+MultiPlot is a Python package designed to facilitate the creation of multiple subplots arranged in a grid-like fashion without having to stress over making the subplots fit in a grid. It provides a simple interface for generating various types of plots from datasets, with customizable layouts, simple preset plotting functions and the ability to use custom plotting functions.
 
 **CHECK OUT THE NOTEBOOK FOR A SIMPLE GUIDE!!!!**
 
