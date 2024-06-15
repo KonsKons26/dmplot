@@ -14,7 +14,7 @@ class MultiPlot:
                     f"'shape' must be of type 'tuple' or 'list', you provided {type(shape)}."
                 )
             if len(shape) != 2:
-                raise TypeError(
+                raise ValueError(
                     f"'shape' must have length = 2, you provided a shape with length = {len(shape)}."
                 )
             if any(s == 0 for s in shape):
