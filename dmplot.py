@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt
 class MultiPlot:
     def __init__(self, dataset, shape=None, perfect_shape=False, square_shape=False, long=True, figsize=None):
         if not (isinstance(dataset, list) or isinstance(dataset, dict)):
-            raise ValueError(
+            raise TypeError(
                 f"'dataset' must be of type 'list' or 'dict', you provided {type(dataset)}."
             )
         if shape:
             if not (isinstance(shape, tuple) or isinstance(shape, list)):
-                raise ValueError(
+                raise TypeError(
                     f"'shape' must be of type 'tuple' or 'list', you provided {type(shape)}."
                 )
             if len(shape) != 2:
-                raise ValueError(
+                raise TypeError(
                     f"'shape' must have length = 2, you provided a shape with length = {len(shape)}."
                 )
             if any(s == 0 for s in shape):
@@ -22,15 +22,15 @@ class MultiPlot:
                     f"Having a shape with a side equal to 0 makes no sense! You provided the shape {shape}"
                 )
         if not isinstance(perfect_shape, bool):
-            raise ValueError(
+            raise TypeError(
                 f"'perfect_shape' must be of type 'bool', you provided {type(perfect_shape)}."
             )
         if not isinstance(square_shape, bool):
-            raise ValueError(
+            raise TypeError(
                 f"'square_shape' must be of type 'bool', you provided {type(square_shape)}."
             )
         if not isinstance(long, bool):
-            raise ValueError(
+            raise TypeError(
                 f"'long' must be of type 'bool', you provided {type(long)}."
             )
         if not figsize:
@@ -40,7 +40,7 @@ class MultiPlot:
                 self.figsize = (10, 12)
         else:
             if not isinstance(figsize, tuple):
-                raise ValueError(
+                raise TypeError(
                     f"'figsize' must be of type 'tuple', you provided {type(figsize)}."
                 )
             else:
@@ -133,7 +133,7 @@ class MultiPlot:
                 rows = cols = int(math.sqrt(next_sq))
             return (rows, cols)
         else:
-            raise ValueError(
+            raise TypeError(
                 "If 'perfect_shape' and 'square_shape' are set to False, please provide a custom shape."
             )
 
