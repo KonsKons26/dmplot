@@ -200,7 +200,7 @@ class PlotFunctions:
 
     @ staticmethod
     def imshow(ax, data):
-        ax.imshow(data, cmap='grey')
+        ax.imshow(data, cmap='gray')
 
     @ staticmethod
     def boxplot(ax, data):
