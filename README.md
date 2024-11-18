@@ -1,8 +1,17 @@
 # dmplot: A Python Package for Dynamic Multiple Plot Generation
 
-MultiPlot is a Python package designed to facilitate the creation of multiple subplots arranged in a grid-like fashion without having to stress over making the subplots fit in a grid. It provides a simple interface for generating various types of plots from datasets, with customizable layouts, simple preset plotting functions and the ability to use custom plotting functions.
+**dmplot** is a Python package designed to facilitate the creation of multiple subplots arranged in a grid-like fashion without having to stress over making the subplots fit in a grid. It provides a simple interface for generating various types of plots from datasets, with customizable layouts, simple preset plotting functions and the ability to use custom plotting functions.
 
-**CHECK OUT THE NOTEBOOK FOR A SIMPLE GUIDE!!!!**
+**CHECK OUT THE NOTEBOOK FOR A SIMPLE GUIDE AND EXAMPLES!!!!**
+
+
+## Features
+
+- Automatically creates a grid layout for multiple subplots.
+- Flexible customization of grid shape (square, long, or perfect fit).
+- Predefined plotting functions for quick use.
+- Support for custom plotting functions.
+- Easy legend customization across subplots or for the entire figure.
 
 ## MultiPlot attributes
 
@@ -31,3 +40,22 @@ Containts several simple plotting functions to save you from the hassle of creat
 - imshow(ax, data)
 - boxplot(ax, data)
 - violinplot(ax, data)
+
+## Example Usecase
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from dmplot import MultiPlot, PlotFunctions
+
+n = 6
+dataset = [np.random.standard_exponential(10_000) for _ in range(n)]
+mp = MultiPlot(dataset, perfect_shape=True, figsize=(8, 6))
+fig, axes = mp.dynamic_plot(PlotFunctions.plot)
+
+colors = "rgbykm"
+[line.set_color(colors[i]) for i, ax in enumerate(axes) for line in ax.get_lines()]
+
+plt.tight_layout()
+plt.show()
+```
