@@ -3,7 +3,19 @@ import matplotlib.pyplot as plt
 
 
 class MultiPlot:
-    def __init__(self, dataset, shape=None, perfect_shape=False, square_shape=False, long=True, figsize=None):
+    def __init__(
+        self,
+        dataset,
+        shape=None,
+        perfect_shape=False,
+        square_shape=False,
+        long=True,
+        figsize=None
+    ):
+        """
+        Type checks and init
+        """
+
         if not (isinstance(dataset, list) or isinstance(dataset, dict)):
             raise TypeError(
                 f"'dataset' must be of type 'list' or 'dict', you provided {type(dataset)}."
@@ -64,27 +76,48 @@ class MultiPlot:
             self.shape = self._check_shape(shape)
 
     def _make_dataset_dict(self, dataset):
+        """
+        Creates a dict from the dataset in case the provided dataset was a list,
+        each key will be used as the suptitle of it's corresponding value (dataset)
+        """
+
         return {f"Plot {i + 1}": ds for i, ds in enumerate(dataset)}
 
     def _get_factors(self):
+        """
+        Finds all factors of a number
+        """
+
         n = self.n
         return sorted(list(set(
             factor for i in range(1, int(n**0.5) + 1) if n % i == 0
             for factor in (i, n//i))), reverse=False)
 
     def _find_next_perfect_square(self, n):
+        """
+        Finds the next perfect sqare number
+        """
+
         if int(math.sqrt(n)) ** 2 == n:
             return n
         else:
             return self._find_next_perfect_square(n + 1)
 
     def _find_previous_perfect_square(self, n):
+        """
+        Finds the previous perfect sqare number
+        """
+
         if int(math.sqrt(n)) ** 2 == n:
             return n
         else:
             return self._find_previous_perfect_square(n - 1)
 
     def _find_nearest_perfect_square(self):
+        """
+        Finds the nearest (either previous or next) perfect square number
+        """
+
         n = self.n
         prev_perf_sq = self.previous_perfect_square
         next_perf_sq = self.next_perfect_square
@@ -98,6 +131,10 @@ class MultiPlot:
             return prev_perf_sq
 
     def _get_shape(self):
+        """
+        Calculates the best shape based on provided parameters
+        """
+
         n = self.n
         nearest_sq = self.nearest_perfect_square
         prev_sq = self.previous_perfect_square
@@ -109,7 +146,8 @@ class MultiPlot:
                 return (side, side)
             else:
                 raise ValueError(
-                    f"Can't create perfect square shape figure with given params -> n:{n} and nearest_perfect_square:{nearest_sq}, dataset must have a perfect square len()")
+                    f"""Can't create perfect square shape figure with given params -> n:{n} and
+                    nearest_perfect_square:{nearest_sq}, dataset must have a perfect square len()""")
         elif self.perfect_shape:
             if len(factors) % 2 == 0:
                 s1 = factors[:int(len(factors) / 2)][-1]
@@ -138,6 +176,10 @@ class MultiPlot:
             )
 
     def _check_shape(self, shape):
+        """
+        Check wether the provided shape fits the rest of the passed arguements
+        """
+
         n = self.n
         s1 = shape[0]
         s2 = shape[1]
@@ -163,18 +205,103 @@ class MultiPlot:
             )
         return (rows, cols)
 
-    def dynamic_plot(self, plot_fn):
+    def dynamic_plot(
+        self,
+        plot_fn,
+        single_legend=False,
+        multiple_legends=False,
+        legend_kwargs=None,
+        **kwargs
+    ):
+        """
+        Generate a grid of subplots using a provided plotting function, with options to
+        customize legend behavior.
+
+        This method creates subplots based on the shape of the dataset and applies a plotting function
+        to each subplot. 
+        The legend can be applied in two ways:
+            - `single_legend`: Adds a legend to the last subplot only.
+            - `multiple_legends`: Adds a legend to each subplot individually.
+        
+        You can customize the appearance of the legend using `legend_kwargs`, which should be a
+        dictionary of keyword arguments to be passed directly to `ax.legend()`. If `legend_kwargs`
+        is not provided, default legend settings will be applied.
+        
+        Parameters:
+        -----------
+        plot_fn : function
+            A function that takes an axis (`ax`) and the data for a particular plot, and plots
+            on the axis.  This function should accept `**kwargs` arguments for additional
+            customizations.
+        
+        single_legend : bool, optional, default: False
+            If True, adds a legend to the last subplot in the grid. This option is ignored
+            if `multiple_legends` is True.
+        
+        multiple_legends : bool, optional, default: False
+            If True, adds a legend to each subplot. This takes precedence over `single_legend`.
+
+        legend_kwargs : dict, optional, default: None
+            A dictionary of keyword arguments to be passed to `ax.legend()` for customizing
+            the appearance of the legend(s) (e.g., location, font size, labels). If not provided, 
+            default legend settings will be applied.
+        
+        **kwargs : keyword arguments, optional
+            Additional keyword arguments passed to the `plot_fn` for further customization of the plot.
+
+        Returns:
+        --------
+        fig : matplotlib.figure.Figure
+            The figure object containing all subplots.
+        
+        axes : numpy.ndarray
+            A 1D array of axes corresponding to the subplots, with one axis per item in the dataset.
+        """
+
+        # If multiple_legends set to True, set single_legend to False
+        if multiple_legends: 
+            single_legend = False
+
+        # Get the shape of the subplots and size for the figure
         rows, cols = self.shape
         figsize = self.figsize
 
+        # Initialize the figure and axes
         fig, axs = plt.subplots(rows, cols, figsize=figsize)
         axes = axs.ravel()
 
+        # Initialize empty lists to collect the handles and labels for a single legend
+        if single_legend:
+            handles, labels = [], []
+
+        # Iterate over each ax and plot using the provided function and specified kwargs
         for i, (title, data) in enumerate(self.dataset.items()):
             ax = axes[i]
-            plot_fn(ax, data)
+            plot_fn(ax, data, **kwargs)
             ax.set_title(title)
 
+            # Generate separate legend for each subplot if specified
+            if multiple_legends:
+                if legend_kwargs:
+                    ax.legend(**legend_kwargs)
+                else:
+                    ax.legend()
+
+            # Collect the unique handles and labels for each subplot
+            if single_legend:
+                for handle, label in zip(*ax.get_legend_handles_labels()):
+                    if label not in labels:
+                        handles.append(handle)
+                        labels.append(label)
+
+        # Generate a single legend with unique handles and labels
+        if single_legend:
+            if legend_kwargs:
+                fig.legend(handles, labels, **legend_kwargs)
+            else:
+                fig.legend(handles, labels)
+
+        # Remove unused axes
         for ax in axes[len(self.dataset):]:
             ax.remove()
 
